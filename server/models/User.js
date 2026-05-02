@@ -38,13 +38,14 @@ const userSchema = new mongoose.Schema(
   { timestamps: true },
 );
 
-userSchema.pre("save", async function (next) {
-  if (!this.isModified("password")) return next();
+// Hash password before saving — modern async style (no `next` param)
+userSchema.pre("save", async function () {
+  if (!this.isModified("password")) return;
   const salt = await bcrypt.genSalt(12);
   this.password = await bcrypt.hash(this.password, salt);
-  next();
 });
 
+// Compare a candidate password against the stored hash
 userSchema.methods.matchPassword = async function (enteredPassword) {
   return bcrypt.compare(enteredPassword, this.password);
 };
