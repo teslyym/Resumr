@@ -21,8 +21,7 @@ app.get("/api/health", (req, res) => {
   res.json({ status: "ok", message: "Resumr server is running" });
 });
 
-// Routes (we'll add these in the next phase)
-// app.use('/api/auth', require('./routes/authRoutes'));
+app.use("/api/auth", require("./routes/authRoutes"));
 // app.use('/api/cv', require('./routes/cvRoutes'));
 
 // Connect to MongoDB and start the server
