@@ -64,7 +64,7 @@ export default function Register() {
             id="name"
             type="text"
             autoComplete="name"
-            placeholder="Jane Doe"
+            placeholder="Name"
             value={name}
             onChange={(e) => setName(e.target.value)}
             required
@@ -78,7 +78,7 @@ export default function Register() {
             id="email"
             type="email"
             autoComplete="email"
-            placeholder="[email protected]"
+            placeholder="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             required
