@@ -1,40 +1,54 @@
-import { createContext, useContext, useState } from "react";
+import {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  useCallback,
+} from "react";
+import { authService } from "@/services/authService";
 
 const AuthContext = createContext(null);
 
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
 
-  // Placeholder methods
-  const login = async (email, password) => {
-    console.log("TODO: implement login", { email, password });
-  };
+  useEffect(() => {
+    const checkSession = async () => {
+      try {
+        const me = await authService.getMe();
+        setUser(me);
+      } catch {
+        setUser(null);
+      } finally {
+        setLoading(false);
+      }
+    };
+    checkSession();
+  }, []);
 
-  const register = async (name, email, password) => {
-    console.log("TODO: implement register", { name, email, password });
-  };
+  const login = useCallback(async (email, password) => {
+    const u = await authService.login(email, password);
+    setUser(u);
+    return u;
+  }, []);
 
-  const logout = async () => {
-    console.log("TODO: implement logout");
+  const register = useCallback(async (name, email, password) => {
+    const u = await authService.register(name, email, password);
+    setUser(u);
+    return u;
+  }, []);
+
+  const logout = useCallback(async () => {
+    try {
+      await authService.logout();
+    } catch {}
     setUser(null);
-  };
+  }, []);
 
-  const _devToggleAuth = () => {
-    setUser(
-      user
-        ? null
-        : { name: "Test User", email: "[email protected]", plan: "free" },
-    );
-  };
+  const value = { user, loading, login, register, logout };
 
-  return (
-    <AuthContext.Provider
-      value={{ user, loading, login, register, logout, _devToggleAuth }}
-    >
-      {children}
-    </AuthContext.Provider>
-  );
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }
 
 export function useAuth() {
