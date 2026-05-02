@@ -23,7 +23,7 @@ import Logo from "@/components/shared/Logo";
 import { useAuth } from "@/context/AuthContext";
 
 export default function Navbar() {
-  const { user, logout, _devToggleAuth } = useAuth();
+  const { user, logout } = useAuth();
   const navigate = useNavigate();
   const [mobileOpen, setMobileOpen] = useState(false);
 
@@ -32,7 +32,6 @@ export default function Navbar() {
     navigate("/");
   };
 
-  // Links shown to logged-in users
   const authedLinks = [
     { to: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
     { to: "/create", label: "New CV", icon: Plus },
@@ -55,7 +54,6 @@ export default function Navbar() {
       className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/70 backdrop-blur-xl"
     >
       <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
-        {/* Left: Logo */}
         <Logo />
 
         <nav className="hidden md:flex items-center gap-1">
@@ -79,14 +77,14 @@ export default function Navbar() {
         </nav>
 
         <div className="hidden md:flex items-center gap-2">
-          <Button
+          {/* <Button
             variant="ghost"
             size="sm"
             onClick={_devToggleAuth}
             className="text-xs"
           >
             [dev] toggle auth
-          </Button>
+          </Button> */}
 
           {user ? (
             <DropdownMenu>
