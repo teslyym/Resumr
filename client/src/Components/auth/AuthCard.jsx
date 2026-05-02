@@ -43,7 +43,6 @@ export default function AuthCard({ title, subtitle, children, footer }) {
         </motion.div>
       </main>
 
-      {/* Quiet footer link */}
       <footer className="relative z-10 px-6 py-6 text-center">
         <Link
           to="/"
