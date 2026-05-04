@@ -16,15 +16,13 @@ app.use(
   }),
 );
 
-// Health check route — useful for testing the server is alive
 app.get("/api/health", (req, res) => {
   res.json({ status: "ok", message: "Resumr server is running" });
 });
 
 app.use("/api/auth", require("./routes/authRoutes"));
-// app.use('/api/cv', require('./routes/cvRoutes'));
+app.use("/api/cv", require("./routes/cvRoutes"));
 
-// Connect to MongoDB and start the server
 const PORT = process.env.PORT || 5000;
 
 mongoose
