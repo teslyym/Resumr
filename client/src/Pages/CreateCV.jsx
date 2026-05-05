@@ -356,20 +356,20 @@ export default function CreateCV() {
                   )}
 
                   {currentStep.id === "review" && (
-                    <div className="space-y-4">
-                      <h2 className="text-2xl font-semibold tracking-tight">
-                        Review &amp; finish
-                      </h2>
-                      <p className="text-sm text-muted-foreground">
-                        Looks good? Your CV is auto-saved. Head back to the
-                        dashboard or open it to download.
-                      </p>
+                    <div className="space-y-5">
+                      <div>
+                        <h2 className="text-2xl font-semibold tracking-tight mb-1">
+                          Review &amp; finish
+                        </h2>
+                        <p className="text-sm text-muted-foreground">
+                          Looks good? Your CV is auto-saved. Download it now or
+                          open the full preview.
+                        </p>
+                      </div>
                       <div className="flex flex-col sm:flex-row gap-2">
-                        <Button onClick={save} variant="outline">
-                          Save now
-                        </Button>
-                        <Button asChild>
-                          <Link to={`/cv/${id}`}>Open CV</Link>
+                        <DownloadButton cv={cv} targetRef={docRef} />
+                        <Button asChild variant="outline">
+                          <Link to={`/cv/${id}`}>Open full preview</Link>
                         </Button>
                       </div>
                     </div>
