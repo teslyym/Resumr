@@ -124,3 +124,11 @@
     mask-image: radial-gradient(ellipse at center, black 40%, transparent 80%);
   }
 }
+@keyframes shimmer-sweep {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(200%);
+  }
+}

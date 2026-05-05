@@ -2,12 +2,20 @@ import { motion } from "framer-motion";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
+import EnhanceButton from "@/components/cv/EnhanceButton";
+import EnhancementDiff from "@/components/cv/EnhancementDiff";
 
 export default function SummarySection({
   targetJobTitle,
   summary,
+  enhancedSummary,
   onTargetChange,
   onSummaryChange,
+  onEnhance,
+  onKeepEnhanced,
+  onRevertEnhanced,
+  enhancing,
+  canEnhance,
 }) {
   const charCount = (summary || "").length;
 
@@ -24,7 +32,7 @@ export default function SummarySection({
         </h2>
         <p className="text-sm text-muted-foreground">
           A short pitch about who you are and what you bring. AI can help you
-          polish this later.
+          polish this.
         </p>
       </div>
 
@@ -37,26 +45,34 @@ export default function SummarySection({
           placeholder="Senior Backend Engineer"
         />
         <p className="text-xs text-muted-foreground">
-          What role are you applying for? Helps tailor everything else.
+          What role are you applying for? Helps tailor the AI rewrite.
         </p>
       </div>
 
       <div className="space-y-2">
-        <div className="flex items-center justify-between">
+        <div className="flex items-center justify-between gap-2 flex-wrap">
           <Label htmlFor="summary">Summary</Label>
-          <span
-            className={`text-xs ${
-              charCount > 400 ? "text-destructive" : "text-muted-foreground"
-            }`}
-          >
-            {charCount} / 400
-          </span>
+          <div className="flex items-center gap-3">
+            <span
+              className={`text-xs ${
+                charCount > 400 ? "text-destructive" : "text-muted-foreground"
+              }`}
+            >
+              {charCount} / 400
+            </span>
+            <EnhanceButton
+              onClick={onEnhance}
+              loading={enhancing}
+              disabled={!canEnhance || charCount === 0}
+              size="sm"
+            />
+          </div>
         </div>
         <Textarea
           id="summary"
           value={summary || ""}
           onChange={(e) => onSummaryChange(e.target.value)}
-          placeholder="Backend engineer with 4 years of experience building scalable APIs and distributed systems..."
+          placeholder="Backend engineer with 4 years of experience..."
           rows={5}
           className="resize-none"
         />
@@ -64,6 +80,16 @@ export default function SummarySection({
           2-4 sentences works best. Keep it tight.
         </p>
       </div>
+
+      {enhancedSummary && enhancedSummary !== summary && (
+        <EnhancementDiff
+          original={summary}
+          enhanced={enhancedSummary}
+          onKeep={onKeepEnhanced}
+          onRevert={onRevertEnhanced}
+          type="text"
+        />
+      )}
     </motion.div>
   );
 }
