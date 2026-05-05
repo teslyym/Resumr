@@ -1,6 +1,5 @@
 import { motion } from "framer-motion";
-import { Mail, Phone, MapPin, Linkedin, Globe } from "lucide-react";
-
+import { Mail, Phone, MapPin, Link2, Globe } from "lucide-react";
 export default function CVPreview({ cv }) {
   const p = cv?.personalInfo || {};
   const hasContact =
@@ -47,7 +46,7 @@ export default function CVPreview({ cv }) {
               )}
               {p.linkedin && (
                 <span className="flex items-center gap-1">
-                  <Linkedin className="w-3 h-3" /> {p.linkedin}
+                  <Link2 className="w-3 h-3" /> {p.linkedin}
                 </span>
               )}
               {p.portfolio && (
