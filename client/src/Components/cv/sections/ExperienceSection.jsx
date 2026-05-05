@@ -4,6 +4,8 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import EntryCard from "./EntryCard";
+import EnhanceButton from "@/components/cv/EnhanceButton";
+import EnhancementDiff from "@/components/cv/EnhancementDiff";
 
 const blankEntry = () => ({
   jobTitle: "",
@@ -11,19 +13,23 @@ const blankEntry = () => ({
   startDate: "",
   endDate: "",
   responsibilities: [""],
+  enhancedResponsibilities: [],
 });
 
-export default function ExperienceSection({ experience = [], onChange }) {
+export default function ExperienceSection({
+  experience = [],
+  onChange,
+  onEnhance,
+  onKeepEnhancedBullets,
+  onRevertEnhancedBullets,
+  enhancing,
+  canEnhance,
+}) {
   const updateEntry = (idx, changes) => {
     onChange(experience.map((e, i) => (i === idx ? { ...e, ...changes } : e)));
   };
-
   const addEntry = () => onChange([...experience, blankEntry()]);
-
-  const removeEntry = (idx) => {
-    onChange(experience.filter((_, i) => i !== idx));
-  };
-
+  const removeEntry = (idx) => onChange(experience.filter((_, i) => i !== idx));
   const moveEntry = (idx, dir) => {
     const newIdx = idx + dir;
     if (newIdx < 0 || newIdx >= experience.length) return;
@@ -56,6 +62,10 @@ export default function ExperienceSection({ experience = [], onChange }) {
     });
   };
 
+  const hasAnyBullets = experience.some((e) =>
+    e.responsibilities?.some((r) => r.trim()),
+  );
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 8 }}
@@ -63,13 +73,24 @@ export default function ExperienceSection({ experience = [], onChange }) {
       transition={{ duration: 0.3 }}
       className="space-y-5"
     >
-      <div>
-        <h2 className="text-2xl font-semibold tracking-tight mb-1">
-          Work experience
-        </h2>
-        <p className="text-sm text-muted-foreground">
-          Add your relevant roles. Most recent first works best.
-        </p>
+      <div className="flex items-start justify-between gap-4 flex-wrap">
+        <div>
+          <h2 className="text-2xl font-semibold tracking-tight mb-1">
+            Work experience
+          </h2>
+          <p className="text-sm text-muted-foreground">
+            Add your relevant roles. Most recent first works best.
+          </p>
+        </div>
+        {hasAnyBullets && (
+          <EnhanceButton
+            onClick={onEnhance}
+            loading={enhancing}
+            disabled={!canEnhance}
+            size="sm"
+            label="Enhance bullets"
+          />
+        )}
       </div>
 
       <div className="space-y-3">
@@ -134,7 +155,6 @@ export default function ExperienceSection({ experience = [], onChange }) {
                 </div>
               </div>
 
-              {/* Bullets */}
               <div className="space-y-2 pt-1">
                 <Label>Responsibilities &amp; achievements</Label>
                 <div className="space-y-2">
@@ -183,6 +203,21 @@ export default function ExperienceSection({ experience = [], onChange }) {
                   Add bullet
                 </button>
               </div>
+
+              {/* AI diff per entry */}
+              {entry.enhancedResponsibilities?.length > 0 && (
+                <div className="pt-2">
+                  <EnhancementDiff
+                    original={
+                      entry.responsibilities?.filter((r) => r.trim()) || []
+                    }
+                    enhanced={entry.enhancedResponsibilities}
+                    onKeep={() => onKeepEnhancedBullets(idx)}
+                    onRevert={() => onRevertEnhancedBullets(idx)}
+                    type="list"
+                  />
+                </div>
+              )}
             </EntryCard>
           ))}
         </AnimatePresence>

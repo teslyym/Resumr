@@ -1,17 +1,26 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useNavigate, useParams, Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import { ArrowLeft, ArrowRight, Eye, EyeOff, Loader2 } from "lucide-react";
+import {
+  ArrowLeft,
+  ArrowRight,
+  Eye,
+  EyeOff,
+  Loader2,
+  AlertCircle,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import Layout from "@/components/layout/Layout";
 import PageTransition from "@/components/shared/PageTransition";
 import { cvService } from "@/services/cvService";
 import { useAutoSave } from "@/lib/useAutoSave";
+import { useAuth } from "@/context/AuthContext";
 import { CV_FORM_STEPS } from "@/components/cv/cvFormSteps";
 import WizardNav from "@/components/cv/WizardNav";
 import SaveStatus from "@/components/cv/SaveStatus";
 import CVPreview from "@/components/cv/CVPreview";
+import UsageIndicator from "@/components/cv/UsageIndicator";
 import PersonalInfoSection from "@/components/cv/sections/PersonalInfoSection";
 import SummarySection from "@/components/cv/sections/SummarySection";
 import SkillsSection from "@/components/cv/sections/SkillsSection";
@@ -23,6 +32,7 @@ import CertificationsSection from "@/components/cv/sections/CertificationsSectio
 export default function CreateCV() {
   const { id } = useParams();
   const navigate = useNavigate();
+  const { user } = useAuth();
 
   const [cv, setCv] = useState(null);
   const [loading, setLoading] = useState(!!id);
@@ -30,7 +40,11 @@ export default function CreateCV() {
   const [stepIdx, setStepIdx] = useState(0);
   const [showPreview, setShowPreview] = useState(true);
 
-  // Load existing CV (or treat as new if no id)
+  // AI state
+  const [enhancing, setEnhancing] = useState(false);
+  const [aiError, setAiError] = useState(null);
+  const [usage, setUsage] = useState(null); // { used, limit }
+
   useEffect(() => {
     if (!id) {
       setCv({});
@@ -59,7 +73,6 @@ export default function CreateCV() {
     };
   }, [id]);
 
-  // Stable save function for the auto-save hook
   const saveFn = useMemo(() => {
     if (!id) return async () => {};
     return async (data) => {
@@ -75,10 +88,74 @@ export default function CreateCV() {
     enabled: !!cv && !!id,
   });
 
-  // Update helpers — patch a field on the cv state
   const patch = (changes) => setCv((prev) => ({ ...prev, ...changes }));
   const patchPersonal = (newPersonal) =>
     setCv((prev) => ({ ...prev, personalInfo: newPersonal }));
+
+  // === AI handlers ===
+  const handleEnhance = async () => {
+    if (!id) return;
+    setEnhancing(true);
+    setAiError(null);
+    try {
+      // Save first so the AI sees latest data
+      await save();
+      const result = await cvService.enhance(id);
+      setCv(result.cv);
+      setUsage(result.usage);
+    } catch (err) {
+      setAiError(
+        err.response?.data?.message ||
+          "Failed to enhance CV. Please try again.",
+      );
+    } finally {
+      setEnhancing(false);
+    }
+  };
+
+  // Summary keep/revert
+  const handleKeepEnhancedSummary = () => {
+    setCv((prev) => ({
+      ...prev,
+      summary: prev.enhancedSummary,
+      enhancedSummary: "", // clear the diff once kept
+    }));
+  };
+  const handleRevertEnhancedSummary = () => {
+    setCv((prev) => ({ ...prev, enhancedSummary: "" }));
+  };
+
+  // Experience keep/revert (per entry)
+  const handleKeepEnhancedBullets = (entryIdx) => {
+    setCv((prev) => {
+      const updated = [...prev.experience];
+      const entry = updated[entryIdx];
+      updated[entryIdx] = {
+        ...entry,
+        responsibilities: entry.enhancedResponsibilities,
+        enhancedResponsibilities: [],
+      };
+      return { ...prev, experience: updated };
+    });
+  };
+  const handleRevertEnhancedBullets = (entryIdx) => {
+    setCv((prev) => {
+      const updated = [...prev.experience];
+      updated[entryIdx] = {
+        ...updated[entryIdx],
+        enhancedResponsibilities: [],
+      };
+      return { ...prev, experience: updated };
+    });
+  };
+
+  // Whether the user can hit the Enhance button right now
+  const canEnhance =
+    !enhancing &&
+    !!id &&
+    (user?.plan === "pro" || (usage?.used ?? 0) < (usage?.limit ?? 5));
+
+  // ===
 
   const goNext = () =>
     setStepIdx((i) => Math.min(i + 1, CV_FORM_STEPS.length - 1));
@@ -88,7 +165,6 @@ export default function CreateCV() {
   const currentStep = CV_FORM_STEPS[stepIdx];
   const progressPct = ((stepIdx + 1) / CV_FORM_STEPS.length) * 100;
 
-  // Loading state
   if (loading) {
     return (
       <Layout hideFooter>
@@ -136,7 +212,12 @@ export default function CreateCV() {
                 </div>
               </div>
 
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-3">
+                <UsageIndicator
+                  used={usage?.used}
+                  limit={usage?.limit}
+                  plan={user?.plan}
+                />
                 <Button
                   variant="ghost"
                   size="sm"
@@ -157,13 +238,35 @@ export default function CreateCV() {
                 </Button>
               </div>
             </div>
-            {/* Progress bar */}
             <Progress value={progressPct} className="h-1 rounded-none" />
           </div>
 
+          {/* AI error banner (non-blocking) */}
+          <AnimatePresence>
+            {aiError && (
+              <motion.div
+                initial={{ opacity: 0, y: -8 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -8 }}
+                className="mx-auto max-w-7xl w-full px-4 sm:px-6 lg:px-8 pt-4"
+              >
+                <div className="flex items-start gap-3 p-3 bg-destructive/10 border border-destructive/20 rounded-md text-sm text-destructive">
+                  <AlertCircle className="w-4 h-4 mt-0.5 shrink-0" />
+                  <div className="flex-1">{aiError}</div>
+                  <button
+                    onClick={() => setAiError(null)}
+                    className="text-xs hover:underline"
+                  >
+                    Dismiss
+                  </button>
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+
           {/* Main */}
           <div className="flex-1 mx-auto max-w-7xl w-full px-4 sm:px-6 lg:px-8 py-8 grid lg:grid-cols-[220px_1fr_minmax(0,_1fr)] gap-8">
-            {/* Wizard nav (sidebar on desktop, top on mobile) */}
+            {/* Wizard nav */}
             <aside className="lg:sticky lg:top-32 lg:self-start lg:max-h-[calc(100vh-9rem)] lg:overflow-y-auto">
               <p className="text-xs uppercase tracking-wider text-muted-foreground font-medium mb-3 hidden lg:block">
                 Sections
@@ -197,8 +300,14 @@ export default function CreateCV() {
                     <SummarySection
                       targetJobTitle={cv?.targetJobTitle}
                       summary={cv?.summary}
+                      enhancedSummary={cv?.enhancedSummary}
                       onTargetChange={(v) => patch({ targetJobTitle: v })}
                       onSummaryChange={(v) => patch({ summary: v })}
+                      onEnhance={handleEnhance}
+                      onKeepEnhanced={handleKeepEnhancedSummary}
+                      onRevertEnhanced={handleRevertEnhancedSummary}
+                      enhancing={enhancing}
+                      canEnhance={canEnhance}
                     />
                   )}
 
@@ -213,6 +322,11 @@ export default function CreateCV() {
                     <ExperienceSection
                       experience={cv?.experience}
                       onChange={(v) => patch({ experience: v })}
+                      onEnhance={handleEnhance}
+                      onKeepEnhancedBullets={handleKeepEnhancedBullets}
+                      onRevertEnhancedBullets={handleRevertEnhancedBullets}
+                      enhancing={enhancing}
+                      canEnhance={canEnhance}
                     />
                   )}
 
@@ -259,7 +373,6 @@ export default function CreateCV() {
                 </motion.div>
               </AnimatePresence>
 
-              {/* Step controls */}
               <div className="flex items-center justify-between gap-3 mt-6">
                 <Button
                   variant="outline"
@@ -282,7 +395,6 @@ export default function CreateCV() {
               </div>
             </div>
 
-            {/* Preview */}
             {showPreview && (
               <aside className="hidden lg:block lg:sticky lg:top-32 lg:self-start lg:max-h-[calc(100vh-9rem)]">
                 <p className="text-xs uppercase tracking-wider text-muted-foreground font-medium mb-3">
