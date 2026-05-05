@@ -25,4 +25,9 @@ export const cvService = {
     const { data } = await api.delete(`/cv/${id}`);
     return data;
   },
+
+  enhance: async (id) => {
+    const { data } = await api.post(`/cv/${id}/enhance`);
+    return data; // { cv, usage: { used, limit } }
+  },
 };
