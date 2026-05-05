@@ -7,6 +7,7 @@ const {
   getCVById,
   updateCV,
   deleteCV,
+  enhanceCVById,
 } = require("../controllers/cvController");
 const { protect } = require("../middleware/authMiddleware");
 
@@ -17,5 +18,5 @@ router.get("/", getMyCVs);
 router.get("/:id", getCVById);
 router.put("/:id", updateCV);
 router.delete("/:id", deleteCV);
-
+router.post("/:id/enhance", enhanceCVById);
 module.exports = router;
