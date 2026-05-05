@@ -7,6 +7,8 @@ import Home from "./pages/Home";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Dashboard from "./pages/Dashboard";
+import CVDetails from "./pages/CVDetails";
+import CreateCV from "./pages/CreateCV";
 
 function AnimatedRoutes() {
   const location = useLocation();
@@ -25,8 +27,30 @@ function AnimatedRoutes() {
             </ProtectedRoute>
           }
         />
-
-        {/* CV routes will be added here next phase */}
+        <Route
+          path="/cv/:id"
+          element={
+            <ProtectedRoute>
+              <CVDetails />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/cv/:id/edit"
+          element={
+            <ProtectedRoute>
+              <CreateCV />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/create"
+          element={
+            <ProtectedRoute>
+              <CreateCV />
+            </ProtectedRoute>
+          }
+        />
       </Routes>
     </AnimatePresence>
   );
