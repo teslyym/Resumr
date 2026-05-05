@@ -32,7 +32,7 @@ export default function EducationSection({ education = [], onChange }) {
           Education
         </h2>
         <p className="text-sm text-muted-foreground">
-          Degrees, diplomas, Certifications, and any relevant programs.
+          Degrees, diplomas, and any relevant programs.
         </p>
       </div>
 
