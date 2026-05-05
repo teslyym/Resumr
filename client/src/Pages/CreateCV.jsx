@@ -15,6 +15,10 @@ import CVPreview from "@/components/cv/CVPreview";
 import PersonalInfoSection from "@/components/cv/sections/PersonalInfoSection";
 import SummarySection from "@/components/cv/sections/SummarySection";
 import SkillsSection from "@/components/cv/sections/SkillsSection";
+import ExperienceSection from "@/components/cv/sections/ExperienceSection";
+import EducationSection from "@/components/cv/sections/EducationSection";
+import ProjectsSection from "@/components/cv/sections/ProjectsSection";
+import CertificationsSection from "@/components/cv/sections/CertificationsSection";
 
 export default function CreateCV() {
   const { id } = useParams();
@@ -205,17 +209,32 @@ export default function CreateCV() {
                     />
                   )}
 
-                  {[
-                    "experience",
-                    "education",
-                    "projects",
-                    "certifications",
-                  ].includes(currentStep.id) && (
-                    <div className="text-center py-12 text-muted-foreground">
-                      <p className="text-sm italic">
-                        {currentStep.label} section coming in the next pass.
-                      </p>
-                    </div>
+                  {currentStep.id === "experience" && (
+                    <ExperienceSection
+                      experience={cv?.experience}
+                      onChange={(v) => patch({ experience: v })}
+                    />
+                  )}
+
+                  {currentStep.id === "education" && (
+                    <EducationSection
+                      education={cv?.education}
+                      onChange={(v) => patch({ education: v })}
+                    />
+                  )}
+
+                  {currentStep.id === "projects" && (
+                    <ProjectsSection
+                      projects={cv?.projects}
+                      onChange={(v) => patch({ projects: v })}
+                    />
+                  )}
+
+                  {currentStep.id === "certifications" && (
+                    <CertificationsSection
+                      certifications={cv?.certifications}
+                      onChange={(v) => patch({ certifications: v })}
+                    />
                   )}
 
                   {currentStep.id === "review" && (
