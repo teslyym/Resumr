@@ -1,6 +1,9 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate, useParams, Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
+import CVDocument from "@/components/cv/CVDocument";
+import DownloadButton from "@/components/cv/DownloadButton";
+
 import {
   ArrowLeft,
   ArrowRight,
@@ -39,6 +42,7 @@ export default function CreateCV() {
   const [error, setError] = useState(null);
   const [stepIdx, setStepIdx] = useState(0);
   const [showPreview, setShowPreview] = useState(true);
+  const docRef = useRef(null);
 
   // AI state
   const [enhancing, setEnhancing] = useState(false);
@@ -211,7 +215,6 @@ export default function CreateCV() {
                   <SaveStatus status={saveStatus} lastSavedAt={lastSavedAt} />
                 </div>
               </div>
-
               <div className="flex items-center gap-3">
                 <UsageIndicator
                   used={usage?.used}
@@ -236,6 +239,7 @@ export default function CreateCV() {
                     </>
                   )}
                 </Button>
+                <DownloadButton cv={cv} targetRef={docRef} size="sm" />
               </div>
             </div>
             <Progress value={progressPct} className="h-1 rounded-none" />
@@ -406,6 +410,18 @@ export default function CreateCV() {
           </div>
         </div>
       </PageTransition>
+      <div
+        style={{
+          position: "fixed",
+          left: "-9999px",
+          top: 0,
+          pointerEvents: "none",
+          opacity: 0,
+        }}
+        aria-hidden="true"
+      >
+        <CVDocument cv={cv} ref={docRef} />
+      </div>
     </Layout>
   );
 }
