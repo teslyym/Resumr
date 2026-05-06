@@ -40,7 +40,7 @@ export default function PersonalInfoSection({ data, onChange }) {
             type="email"
             value={data?.email || ""}
             onChange={update("email")}
-            placeholder="email"
+            placeholder="Email"
           />
         </div>
 
