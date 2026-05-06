@@ -369,16 +369,24 @@ export default function CreateCV() {
                   )}
 
                   {currentStep.id === "review" && (
-                    <div className="space-y-5">
+                    <div className="space-y-6">
                       <div>
                         <h2 className="text-2xl font-semibold tracking-tight mb-1">
                           Review &amp; finish
                         </h2>
                         <p className="text-sm text-muted-foreground">
-                          Looks good? Your CV is auto-saved. Download it now or
-                          open the full preview.
+                          Pick a template, then download. Your CV is auto-saved.
                         </p>
                       </div>
+
+                      {/* Template picker (visible on mobile here, since it's not in the sidebar there) */}
+                      <div className="lg:hidden">
+                        <TemplatePicker
+                          value={cv?.template}
+                          onChange={(tpl) => patch({ template: tpl })}
+                        />
+                      </div>
+
                       <div className="flex flex-col sm:flex-row gap-2">
                         <DownloadButton cv={cv} targetRef={docRef} />
                         <Button asChild variant="outline">
