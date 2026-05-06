@@ -272,15 +272,27 @@ export default function CreateCV() {
           {/* Main */}
           <div className="flex-1 mx-auto max-w-7xl w-full px-4 sm:px-6 lg:px-8 py-8 grid lg:grid-cols-[220px_1fr_minmax(0,_1fr)] gap-8">
             {/* Wizard nav */}
-            <aside className="lg:sticky lg:top-32 lg:self-start lg:max-h-[calc(100vh-9rem)] lg:overflow-y-auto">
-              <p className="text-xs uppercase tracking-wider text-muted-foreground font-medium mb-3 hidden lg:block">
-                Sections
-              </p>
-              <WizardNav
-                steps={CV_FORM_STEPS}
-                current={stepIdx}
-                onJump={(i) => setStepIdx(i)}
-              />
+            <aside className="lg:sticky lg:top-32 lg:self-start lg:max-h-[calc(100vh-9rem)] lg:overflow-y-auto space-y-6">
+              <div>
+                <p className="text-xs uppercase tracking-wider text-muted-foreground font-medium mb-3 hidden lg:block">
+                  Sections
+                </p>
+                <WizardNav
+                  steps={CV_FORM_STEPS}
+                  current={stepIdx}
+                  onJump={(i) => {
+                    setStepIdx(i);
+                    scrollToTop();
+                  }}
+                />
+              </div>
+
+              <div className="hidden lg:block">
+                <TemplatePicker
+                  value={cv?.template}
+                  onChange={(tpl) => patch({ template: tpl })}
+                />
+              </div>
             </aside>
 
             {/* Form */}
