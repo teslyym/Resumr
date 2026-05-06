@@ -2,6 +2,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate, useParams, Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import CVDocument from "@/components/cv/CVDocument";
+import TemplatePicker from "@/components/cv/TemplatePicker";
 import DownloadButton from "@/components/cv/DownloadButton";
 
 import {
