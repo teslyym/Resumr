@@ -68,7 +68,7 @@ export default function Footer() {
           <p className="text-xs text-muted-foreground">
             © {year} Resumr. All rights reserved.
           </p>
-          <p className="text-xs text-muted-foreground">Built with care.</p>
+          <p className="text-xs text-muted-foreground"></p>
         </div>
       </div>
     </footer>
