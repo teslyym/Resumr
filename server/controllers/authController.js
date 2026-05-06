@@ -68,9 +68,12 @@ const login = async (req, res) => {
 };
 
 const logout = (req, res) => {
+  const isProd = process.env.NODE_ENV === "production";
   res.cookie("jwt", "", {
     httpOnly: true,
-    expires: new Date(0), // expires immediately
+    secure: isProd,
+    sameSite: isProd ? "none" : "strict",
+    expires: new Date(0),
   });
   res.status(200).json({ message: "Logged out" });
 };
