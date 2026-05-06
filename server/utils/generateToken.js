@@ -9,12 +9,11 @@ const generateToken = (res, userId) => {
     expiresIn: process.env.JWT_EXPIRES_IN || "24h",
   });
 
-
   res.cookie("jwt", token, {
-    httpOnly: true, // JS can't read it (XSS protection)
-    secure: process.env.NODE_ENV === "production", // HTTPS only in prod
-    sameSite: "strict", // CSRF protection
-    maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days in milliseconds
+    httpOnly: true,
+    secure: isProd,
+    sameSite: isProd ? "none" : "strict",
+    maxAge: 24 * 60 * 60 * 1000, // 24 hours
   });
 
   return token;
