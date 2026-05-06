@@ -9,6 +9,8 @@ const generateToken = (res, userId) => {
     expiresIn: process.env.JWT_EXPIRES_IN || "24h",
   });
 
+  const isProd = process.env.NODE_ENV === "production";
+
   res.cookie("jwt", token, {
     httpOnly: true,
     secure: isProd,
