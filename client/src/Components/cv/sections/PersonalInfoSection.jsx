@@ -29,7 +29,7 @@ export default function PersonalInfoSection({ data, onChange }) {
             id="fullName"
             value={data?.fullName || ""}
             onChange={update("fullName")}
-            placeholder="Jane Doe"
+            placeholder="Full Name"
           />
         </div>
 
@@ -40,7 +40,7 @@ export default function PersonalInfoSection({ data, onChange }) {
             type="email"
             value={data?.email || ""}
             onChange={update("email")}
-            placeholder="[email protected]"
+            placeholder="email"
           />
         </div>
 
@@ -61,7 +61,7 @@ export default function PersonalInfoSection({ data, onChange }) {
             id="location"
             value={data?.location || ""}
             onChange={update("location")}
-            placeholder="Lagos, Nigeria"
+            placeholder="City, Country"
           />
         </div>
 
@@ -71,7 +71,7 @@ export default function PersonalInfoSection({ data, onChange }) {
             id="linkedin"
             value={data?.linkedin || ""}
             onChange={update("linkedin")}
-            placeholder="linkedin.com/in/janedoe"
+            placeholder="linkedin.com/in/yourname"
           />
         </div>
 
@@ -81,7 +81,7 @@ export default function PersonalInfoSection({ data, onChange }) {
             id="portfolio"
             value={data?.portfolio || ""}
             onChange={update("portfolio")}
-            placeholder="janedoe.com"
+            placeholder="yourname.com"
           />
         </div>
       </div>
