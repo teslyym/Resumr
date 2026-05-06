@@ -9,10 +9,19 @@ const app = express();
 // Middleware
 app.use(express.json());
 app.use(cookieParser());
+// Allow multiple frontend origins (local dev + production)
+const allowedOrigins = (process.env.CLIENT_URL || "http://localhost:5173")
+  .split(",")
+  .map((s) => s.trim());
+
 app.use(
   cors({
-    origin: process.env.CLIENT_URL,
-    credentials: true, // allows cookies to be sent from frontend
+    origin: (origin, callback) => {
+      if (!origin) return callback(null, true);
+      if (allowedOrigins.includes(origin)) return callback(null, true);
+      callback(new Error(`CORS: origin ${origin} not allowed`));
+    },
+    credentials: true,
   }),
 );
 
