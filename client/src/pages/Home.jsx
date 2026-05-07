@@ -17,7 +17,7 @@ const features = [
     icon: Sparkles,
     title: "AI-powered writing",
     description:
-      "Rewrite your summary and bullet points with Claude AI for maximum impact.",
+      "Rewrite your summary and bullet points with AI for maximum impact.",
   },
   {
     icon: Target,
