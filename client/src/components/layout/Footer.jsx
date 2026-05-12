@@ -56,28 +56,6 @@ export default function Footer() {
               Terms
             </Link>
           </div>
-          {/* Company links */}
-          <div className="flex flex-col gap-3">
-            <h4 className="text-sm font-medium">Company</h4>
-            <Link
-              to="/"
-              className="text-sm text-muted-foreground hover:text-foreground transition-colors"
-            >
-              About
-            </Link>
-            <Link
-              to="/"
-              className="text-sm text-muted-foreground hover:text-foreground transition-colors"
-            >
-              Privacy
-            </Link>
-            <Link
-              to="/"
-              className="text-sm text-muted-foreground hover:text-foreground transition-colors"
-            >
-              Terms
-            </Link>
-          </div>
         </div>
 
         <div className="mt-10 pt-6 border-t border-border/40 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">

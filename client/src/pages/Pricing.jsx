@@ -160,7 +160,7 @@ export default function Pricing() {
 
             <p className="text-xs text-muted-foreground text-center mt-6">
               Want to be notified when Pro launches? Email{" "}
-              <MailLink>[email protected]</MailLink>.
+              <MailLink>layiteslim@gmail.com</MailLink>.
             </p>
           </div>
         </section>
