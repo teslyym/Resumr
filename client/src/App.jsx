@@ -2,6 +2,10 @@ import { Routes, Route, useLocation } from "react-router-dom";
 import { AnimatePresence } from "framer-motion";
 import { AuthProvider } from "@/context/AuthContext";
 import ProtectedRoute from "@/components/layout/ProtectedRoute";
+import Privacy from "./pages/Privacy";
+import Terms from "./pages/Terms";
+import About from "./pages/About";
+import Pricing from "./pages/Pricing";
 
 import Home from "./pages/Home";
 import Login from "./pages/Login";
