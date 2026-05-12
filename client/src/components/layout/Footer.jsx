@@ -21,25 +21,41 @@ export default function Footer() {
           <div className="flex flex-col gap-3">
             <h4 className="text-sm font-medium">Product</h4>
             <Link
-              to="/"
-              className="text-sm text-muted-foreground hover:text-foreground transition-colors"
-            >
-              Templates
-            </Link>
-            <Link
-              to="/"
+              to="/pricing"
               className="text-sm text-muted-foreground hover:text-foreground transition-colors"
             >
               Pricing
             </Link>
             <Link
-              to="/"
+              to="/register"
               className="text-sm text-muted-foreground hover:text-foreground transition-colors"
             >
-              Examples
+              Get started
             </Link>
           </div>
 
+          {/* Company links */}
+          <div className="flex flex-col gap-3">
+            <h4 className="text-sm font-medium">Company</h4>
+            <Link
+              to="/about"
+              className="text-sm text-muted-foreground hover:text-foreground transition-colors"
+            >
+              About
+            </Link>
+            <Link
+              to="/privacy"
+              className="text-sm text-muted-foreground hover:text-foreground transition-colors"
+            >
+              Privacy
+            </Link>
+            <Link
+              to="/terms"
+              className="text-sm text-muted-foreground hover:text-foreground transition-colors"
+            >
+              Terms
+            </Link>
+          </div>
           {/* Company links */}
           <div className="flex flex-col gap-3">
             <h4 className="text-sm font-medium">Company</h4>
